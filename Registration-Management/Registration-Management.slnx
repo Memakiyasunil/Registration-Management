@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="../Database/Database.sqlproj">
+    <Build />
+    <Deploy />
+  </Project>
   <Project Path="Registration-Management.csproj" />
 </Solution>

@@ -43,7 +43,14 @@
                     <select name="pageSize" class="form-select" onchange="this.form.submit()" id="pageSizeSelect">
                         @foreach (var ps in new[] { 10, 25, 50, 100 })
                         {
-                            <option value="@ps" @(Model.PageSize == ps ? "selected" : "")>@ps per page</option>
+                            if (Model.PageSize == ps)
+                            {
+                                <option value="@ps" selected>@ps per page</option>
+                            }
+                            else
+                            {
+                                <option value="@ps">@ps per page</option>
+                            }
                         }
                     </select>
                 </div>
@@ -76,7 +83,14 @@
                             <option value="">All States</option>
                             @foreach (var s in Model.States)
                             {
-                                <option value="@s.StateId" @(Model.FilterStateId == s.StateId ? "selected" : "")>@s.StateName</option>
+                                if (Model.FilterStateId == s.StateId)
+                                {
+                                    <option value="@s.StateId" selected>@s.StateName</option>
+                                }
+                                else
+                                {
+                                    <option value="@s.StateId">@s.StateName</option>
+                                }
                             }
                         </select>
                     </div>
@@ -84,9 +98,9 @@
                         <label class="form-label small text-muted mb-1">Gender</label>
                         <select name="filterGender" class="form-select form-select-sm">
                             <option value="">All Genders</option>
-                            <option value="Male" @(Model.FilterGender == "Male" ? "selected" : "")>Male</option>
-                            <option value="Female" @(Model.FilterGender == "Female" ? "selected" : "")>Female</option>
-                            <option value="Other" @(Model.FilterGender == "Other" ? "selected" : "")>Other</option>
+                            @if (Model.FilterGender == "Male") { <option value="Male" selected>Male</option> } else { <option value="Male">Male</option> }
+                            @if (Model.FilterGender == "Female") { <option value="Female" selected>Female</option> } else { <option value="Female">Female</option> }
+                            @if (Model.FilterGender == "Other") { <option value="Other" selected>Other</option> } else { <option value="Other">Other</option> }
                         </select>
                     </div>
                     <div class="col-md-1">
@@ -124,20 +138,20 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col" class="sortable-col" data-col="Name">
-                        Name @SortIcon("Name")
+                        Name @Html.Raw(SortIconHtml("Name"))
                     </th>
                     <th scope="col" class="sortable-col" data-col="Username">
-                        Username @SortIcon("Username")
+                        Username @Html.Raw(SortIconHtml("Username"))
                     </th>
                     <th scope="col" class="sortable-col" data-col="DateOfBirth">
-                        DOB @SortIcon("DateOfBirth")
+                        DOB @Html.Raw(SortIconHtml("DateOfBirth"))
                     </th>
                     <th scope="col">Gender</th>
                     <th scope="col">Hobbies</th>
                     <th scope="col">State / City</th>
                     <th scope="col">Pincode</th>
                     <th scope="col" class="sortable-col" data-col="CreatedDate">
-                        Registered @SortIcon("CreatedDate")
+                        Registered @Html.Raw(SortIconHtml("CreatedDate"))
                     </th>
                     <th scope="col">Docs</th>
                     <th scope="col">Actions</th>
@@ -303,13 +317,13 @@
         }) ?? "#";
     }
 
-    IHtmlContent SortIcon(string col)
+    string SortIconHtml(string col)
     {
         if (Model.SortColumn != col)
-            return new HtmlString("<svg width='12' height='12' fill='#9ca3af' viewBox='0 0 24 24'><path d='M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.42 1.41L12 21l4.59-4.59L15.17 15 12 18.17z'/></svg>");
+            return "<svg width='12' height='12' fill='#9ca3af' viewBox='0 0 24 24'><path d='M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.42 1.41L12 21l4.59-4.59L15.17 15 12 18.17z'/></svg>";
         return Model.SortDirection == "ASC"
-            ? new HtmlString("<svg width='12' height='12' fill='#4f46e5' viewBox='0 0 24 24'><path d='M7 14l5-5 5 5z'/></svg>")
-            : new HtmlString("<svg width='12' height='12' fill='#4f46e5' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+            ? "<svg width='12' height='12' fill='#4f46e5' viewBox='0 0 24 24'><path d='M7 14l5-5 5 5z'/></svg>"
+            : "<svg width='12' height='12' fill='#4f46e5' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>";
     }
 }
 

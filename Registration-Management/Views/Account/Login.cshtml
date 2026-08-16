@@ -10,172 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login — Registration Management System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --surface: #ffffff;
-            --bg: #f1f5f9;
-            --text: #1e293b;
-            --muted: #64748b;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --shadow: 0 20px 60px rgba(79,70,229,0.15);
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        .login-wrapper {
-            width: 100%;
-            max-width: 440px;
-            padding: 20px;
-        }
-
-        .login-card {
-            background: var(--surface);
-            border-radius: 20px;
-            padding: 48px 40px;
-            box-shadow: var(--shadow);
-            animation: slideUp .4s ease;
-        }
-
-        @@keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .brand-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary), #7c3aed);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-
-        .brand-icon svg { width: 32px; height: 32px; fill: #fff; }
-
-        h1.login-title {
-            text-align: center;
-            font-size: 1.625rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .login-subtitle {
-            text-align: center;
-            color: var(--muted);
-            font-size: .9rem;
-            margin-bottom: 32px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            font-size: .875rem;
-            color: var(--text);
-            margin-bottom: 6px;
-        }
-
-        .form-control {
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: .95rem;
-            transition: border-color .2s, box-shadow .2s;
-            color: var(--text);
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79,70,229,.12);
-            outline: none;
-        }
-
-        .input-group-text {
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg);
-            cursor: pointer;
-            border-left: none;
-        }
-
-        .input-group .form-control {
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-        }
-
-        .input-group .input-group-text {
-            border-radius: 0 10px 10px 0;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, var(--primary), #7c3aed);
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity .2s, transform .1s;
-            margin-top: 8px;
-        }
-
-        .btn-login:hover { opacity: .9; transform: translateY(-1px); }
-        .btn-login:active { transform: translateY(0); }
-
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-            font-size: .9rem;
-            color: var(--muted);
-        }
-
-        .register-link a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .register-link a:hover { text-decoration: underline; }
-
-        .alert-danger {
-            border-radius: 10px;
-            border: none;
-            background: #fef2f2;
-            color: var(--danger);
-            font-size: .9rem;
-        }
-
-        .text-danger { font-size: .8rem; }
-
-        .success-banner {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            border-radius: 10px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            font-size: .9rem;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
 </head>
-<body>
+<body class="login-body">
     <div class="login-wrapper">
         <div class="login-card">
             <div class="brand-icon">
@@ -189,7 +27,7 @@
 
             @if (TempData["Success"] != null)
             {
-                <div class="success-banner">✓ @TempData["Success"]</div>
+                <div class="success-banner">&#10003; @TempData["Success"]</div>
             }
 
             <form asp-action="Login" asp-controller="Account" method="post" novalidate>
@@ -198,36 +36,37 @@
                 @if (!ViewData.ModelState.IsValid)
                 {
                     <div class="alert alert-danger mb-3">
-                        @Html.ValidationSummary(false, null, new { @@class = "mb-0" })
+                        @Html.ValidationSummary(false, null, new { @class = "mb-0" })
                     </div>
                 }
 
                 <div class="mb-3">
-                    <label asp-for="Username" class="form-label">Username</label>
+                    <label asp-for="Username" class="form-label fw-semibold">Username</label>
                     <input asp-for="Username" class="form-control" id="loginUsername"
                            placeholder="Enter your username" autocomplete="username" />
-                    <span asp-validation-for="Username" class="text-danger"></span>
+                    <span asp-validation-for="Username" class="text-danger small"></span>
                 </div>
 
                 <div class="mb-4">
-                    <label asp-for="Password" class="form-label">Password</label>
+                    <label asp-for="Password" class="form-label fw-semibold">Password</label>
                     <div class="input-group">
                         <input asp-for="Password" type="password" class="form-control" id="loginPassword"
                                placeholder="Enter your password" autocomplete="current-password" />
-                        <span class="input-group-text" onclick="togglePwd('loginPassword', this)" title="Show/Hide password">
+                        <span class="input-group-text" onclick="togglePwd('loginPassword')" title="Show/Hide password" style="cursor:pointer">
                             <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                             </svg>
                         </span>
                     </div>
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                    <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
 
-                <button type="submit" class="btn-login" id="loginBtn">Sign In</button>
+                <button type="submit" class="btn btn-primary btn-lg w-100" id="loginBtn">Sign In</button>
             </form>
 
-            <div class="register-link">
-                Don't have an account? <a asp-controller="Registration" asp-action="Create">Register here</a>
+            <div class="text-center mt-4">
+                <span class="text-muted small">Don't have an account? </span>
+                <a asp-controller="Registration" asp-action="Create" class="text-primary fw-semibold small">Register here</a>
             </div>
         </div>
     </div>
@@ -236,8 +75,8 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
     <script>
-        function togglePwd(inputId, btn) {
-            const input = document.getElementById(inputId);
+        function togglePwd(inputId) {
+            var input = document.getElementById(inputId);
             input.type = input.type === 'password' ? 'text' : 'password';
         }
     </script>

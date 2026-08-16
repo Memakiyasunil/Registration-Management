@@ -122,7 +122,7 @@ namespace Registration_Management.Controllers
                 TempData["Success"] = "Registration completed successfully! Please login.";
                 return RedirectToAction("Login", "Account");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again.");
                 model.States = await _masterRepo.GetStatesAsync();
