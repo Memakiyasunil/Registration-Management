@@ -1,0 +1,339 @@
+@model RegistrationListViewModel
+@{
+    ViewData["Title"] = "Registration List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title mb-1">
+            <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24" class="me-2" style="vertical-align:-4px">
+                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+            </svg>
+            Registration List
+        </h1>
+        <p class="text-muted mb-0">Total: <strong>@Model.TotalCount</strong> registrations</p>
+    </div>
+    <a asp-controller="Registration" asp-action="Create" class="btn btn-primary">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" class="me-1">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        New Registration
+    </a>
+</div>
+
+<!-- Search & Filters -->
+<div class="card filter-card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" id="filterForm">
+            <!-- Quick Search -->
+            <div class="row g-2 mb-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white">
+                            <svg width="16" height="16" fill="#94a3b8" viewBox="0 0 24 24">
+                                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="searchTerm" value="@Model.SearchTerm" class="form-control"
+                               placeholder="Search by name or username..." id="searchInput" />
+                        <button type="submit" class="btn btn-primary px-4">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <select name="pageSize" class="form-select" onchange="this.form.submit()" id="pageSizeSelect">
+                        @foreach (var ps in new[] { 10, 25, 50, 100 })
+                        {
+                            <option value="@ps" @(Model.PageSize == ps ? "selected" : "")>@ps per page</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-secondary w-100" data-bs-toggle="collapse"
+                            data-bs-target="#advancedFilters">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" class="me-1">
+                            <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                        </svg>
+                        Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advanced Filters (collapsible) -->
+            <div class="collapse @(Model.FilterName != null || Model.FilterUsername != null || Model.FilterStateId != null || Model.FilterGender != null || Model.FilterFromDate != null ? "show" : "")"
+                 id="advancedFilters">
+                <div class="row g-2 pt-2 border-top">
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted mb-1">Name</label>
+                        <input type="text" name="filterName" value="@Model.FilterName" class="form-control form-control-sm" placeholder="Filter by name" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small text-muted mb-1">Username</label>
+                        <input type="text" name="filterUsername" value="@Model.FilterUsername" class="form-control form-control-sm" placeholder="Filter by username" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted mb-1">State</label>
+                        <select name="filterStateId" class="form-select form-select-sm">
+                            <option value="">All States</option>
+                            @foreach (var s in Model.States)
+                            {
+                                <option value="@s.StateId" @(Model.FilterStateId == s.StateId ? "selected" : "")>@s.StateName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted mb-1">Gender</label>
+                        <select name="filterGender" class="form-select form-select-sm">
+                            <option value="">All Genders</option>
+                            <option value="Male" @(Model.FilterGender == "Male" ? "selected" : "")>Male</option>
+                            <option value="Female" @(Model.FilterGender == "Female" ? "selected" : "")>Female</option>
+                            <option value="Other" @(Model.FilterGender == "Other" ? "selected" : "")>Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label small text-muted mb-1">From Date</label>
+                        <input type="date" name="filterFromDate"
+                               value="@(Model.FilterFromDate.HasValue ? Model.FilterFromDate.Value.ToString("yyyy-MM-dd") : "")"
+                               class="form-control form-control-sm" />
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label small text-muted mb-1">To Date</label>
+                        <input type="date" name="filterToDate"
+                               value="@(Model.FilterToDate.HasValue ? Model.FilterToDate.Value.ToString("yyyy-MM-dd") : "")"
+                               class="form-control form-control-sm" />
+                    </div>
+                    <div class="col-12 d-flex gap-2 pt-1">
+                        <button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
+                        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Reset</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden sort fields -->
+            <input type="hidden" name="sortColumn" id="sortColumn" value="@Model.SortColumn" />
+            <input type="hidden" name="sortDirection" id="sortDirection" value="@Model.SortDirection" />
+            <input type="hidden" name="pageNumber" id="pageNumber" value="1" />
+        </form>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="registrationTable">
+            <thead class="table-head-primary">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" class="sortable-col" data-col="Name">
+                        Name @SortIcon("Name")
+                    </th>
+                    <th scope="col" class="sortable-col" data-col="Username">
+                        Username @SortIcon("Username")
+                    </th>
+                    <th scope="col" class="sortable-col" data-col="DateOfBirth">
+                        DOB @SortIcon("DateOfBirth")
+                    </th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Hobbies</th>
+                    <th scope="col">State / City</th>
+                    <th scope="col">Pincode</th>
+                    <th scope="col" class="sortable-col" data-col="CreatedDate">
+                        Registered @SortIcon("CreatedDate")
+                    </th>
+                    <th scope="col">Docs</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Registrations.Any())
+                {
+                    <tr>
+                        <td colspan="11" class="text-center py-5 text-muted">
+                            <svg width="48" height="48" fill="#d1d5db" viewBox="0 0 24 24" class="mb-2 d-block mx-auto">
+                                <path d="M20 6h-2.18c.07-.44.18-.88.18-1.36 0-2.56-2.09-4.64-4.64-4.64-1.42 0-2.68.62-3.57 1.58L9 3l-.79-.42C7.32 1.62 6.06 1 4.64 1 2.09 1 0 3.08 0 5.64c0 .48.11.92.18 1.36H0v14a2 2 0 002 2h16a2 2 0 002-2V6zm-8 13l-4-4 1.41-1.41L12 16.17l6.59-6.59L20 11l-8 8z"/>
+                            </svg>
+                            No registrations found.
+                        </td>
+                    </tr>
+                }
+                @{int rowNum = (Model.PageNumber - 1) * Model.PageSize + 1;}
+                @foreach (var item in Model.Registrations)
+                {
+                    <tr>
+                        <td class="text-muted small">@(rowNum++)</td>
+                        <td>
+                            <div class="fw-semibold">@item.Name</div>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">@item.Username</span></td>
+                        <td class="small">@item.DateOfBirth.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <span class="badge @(item.Gender == "Male" ? "bg-primary" : item.Gender == "Female" ? "bg-pink" : "bg-secondary")">
+                                @item.Gender
+                            </span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Hobbies))
+                            {
+                                <div class="hobby-tags">
+                                    @foreach (var h in item.Hobbies.Split(','))
+                                    {
+                                        <span class="badge-hobby">@h.Trim()</span>
+                                    }
+                                </div>
+                            }
+                        </td>
+                        <td class="small">
+                            <div>@item.StateName</div>
+                            <div class="text-muted">@item.CityName</div>
+                        </td>
+                        <td class="small">@item.Pincode</td>
+                        <td class="small text-muted">@item.CreatedDate.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @if (item.DocumentCount > 0)
+                            {
+                                <span class="badge bg-info text-dark">@item.DocumentCount file(s)</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">—</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap">
+                                <a asp-action="Details" asp-route-id="@item.UserId"
+                                   class="btn btn-sm btn-outline-info" title="Details">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                    </svg>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.UserId"
+                                   class="btn btn-sm btn-outline-warning" title="Edit">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        title="Delete"
+                                        onclick="confirmDelete(@item.UserId, '@Html.Raw(item.Name.Replace("'", "\\'"))')">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+                Showing @((Model.PageNumber - 1) * Model.PageSize + 1)–@(Math.Min(Model.PageNumber * Model.PageSize, Model.TotalCount))
+                of @Model.TotalCount records
+            </small>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="@PageUrl(1)">««</a>
+                    </li>
+                    <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="@PageUrl(Model.PageNumber - 1)">‹</a>
+                    </li>
+                    @for (int p = Math.Max(1, Model.PageNumber - 2); p <= Math.Min(Model.TotalPages, Model.PageNumber + 2); p++)
+                    {
+                        <li class="page-item @(p == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="@PageUrl(p)">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="@PageUrl(Model.PageNumber + 1)">›</a>
+                    </li>
+                    <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="@PageUrl(Model.TotalPages)">»»</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <p>Are you sure you want to delete <strong id="deleteUserName"></strong>?</p>
+                <p class="text-muted small">This will soft-delete the registration (IsActive = 0).</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="Delete" method="post" id="deleteForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deleteUserId" />
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string PageUrl(int page)
+    {
+        return Url.Action("Index", new
+        {
+            pageNumber = page,
+            pageSize = Model.PageSize,
+            searchTerm = Model.SearchTerm,
+            filterName = Model.FilterName,
+            filterUsername = Model.FilterUsername,
+            filterStateId = Model.FilterStateId,
+            filterGender = Model.FilterGender,
+            filterFromDate = Model.FilterFromDate?.ToString("yyyy-MM-dd"),
+            filterToDate = Model.FilterToDate?.ToString("yyyy-MM-dd"),
+            sortColumn = Model.SortColumn,
+            sortDirection = Model.SortDirection
+        }) ?? "#";
+    }
+
+    IHtmlContent SortIcon(string col)
+    {
+        if (Model.SortColumn != col)
+            return new HtmlString("<svg width='12' height='12' fill='#9ca3af' viewBox='0 0 24 24'><path d='M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.42 1.41L12 21l4.59-4.59L15.17 15 12 18.17z'/></svg>");
+        return Model.SortDirection == "ASC"
+            ? new HtmlString("<svg width='12' height='12' fill='#4f46e5' viewBox='0 0 24 24'><path d='M7 14l5-5 5 5z'/></svg>")
+            : new HtmlString("<svg width='12' height='12' fill='#4f46e5' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+    }
+}
+
+@section Scripts {
+    <script>
+        // Sort columns
+        document.querySelectorAll('.sortable-col').forEach(th => {
+            th.style.cursor = 'pointer';
+            th.addEventListener('click', function () {
+                const col = this.dataset.col;
+                const curCol = document.getElementById('sortColumn').value;
+                const curDir = document.getElementById('sortDirection').value;
+                document.getElementById('sortColumn').value = col;
+                document.getElementById('sortDirection').value = (curCol === col && curDir === 'ASC') ? 'DESC' : 'ASC';
+                document.getElementById('pageNumber').value = 1;
+                document.getElementById('filterForm').submit();
+            });
+        });
+
+        // Delete confirmation
+        function confirmDelete(id, name) {
+            document.getElementById('deleteUserId').value = id;
+            document.getElementById('deleteUserName').textContent = name;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+}

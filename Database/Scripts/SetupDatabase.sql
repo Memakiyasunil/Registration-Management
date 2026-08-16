@@ -61,7 +61,7 @@ BEGIN
     CREATE TABLE Users (
         UserId       INT IDENTITY(1,1) PRIMARY KEY,
         Name         NVARCHAR(100) NOT NULL,
-        Username     NVARCHAR(50)  NOT NULL,
+        Username     NVARCHAR(50)  NOT NULL UNIQUE,
         PasswordHash NVARCHAR(256) NOT NULL,
         DateOfBirth  DATE NOT NULL,
         Gender       NVARCHAR(10)  NOT NULL,
@@ -72,11 +72,9 @@ BEGIN
         IsActive     BIT NOT NULL DEFAULT 1,
         CreatedDate  DATETIME NOT NULL DEFAULT GETDATE(),
         ModifiedDate DATETIME NULL,
-        CONSTRAINT UQ_Users_Username FOREIGN KEY (StateId) REFERENCES States(StateId),
-        CONSTRAINT FK_Users_Cities   FOREIGN KEY (CityId)  REFERENCES Cities(CityId)
+        CONSTRAINT FK_Users_States FOREIGN KEY (StateId) REFERENCES States(StateId),
+        CONSTRAINT FK_Users_Cities FOREIGN KEY (CityId)  REFERENCES Cities(CityId)
     );
-    -- Add unique constraint separately
-    ALTER TABLE Users ADD CONSTRAINT UQ_Username UNIQUE (Username);
 END
 GO
 
