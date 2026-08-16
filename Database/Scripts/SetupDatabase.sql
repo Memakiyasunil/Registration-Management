@@ -1,19 +1,19 @@
 -- ============================================================
 -- Registration Management System — Full Database Setup Script
 -- Run this script against your SQL Server instance
--- Database: RegistrationManagementDB
+-- Database: RegistrationDB
 -- ============================================================
 
 USE master;
 GO
 
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'RegistrationManagementDB')
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'RegistrationDB')
 BEGIN
-    CREATE DATABASE RegistrationManagementDB;
+    CREATE DATABASE RegistrationDB;
 END
 GO
 
-USE RegistrationManagementDB;
+USE RegistrationDB;
 GO
 
 -- ============================================================

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -56,5 +56,40 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Tables\" />
+    <Folder Include="Stored Procedures\" />
+    <Folder Include="Post-Deployment\" />
+    <Folder Include="Scripts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\States.sql" />
+    <Build Include="Tables\Cities.sql" />
+    <Build Include="Tables\Hobbies.sql" />
+    <Build Include="Tables\Users.sql" />
+    <Build Include="Tables\UserHobbies.sql" />
+    <Build Include="Tables\UserDocuments.sql" />
+    <Build Include="Stored Procedures\sp_CheckUsernameAvailability.sql" />
+    <Build Include="Stored Procedures\sp_RegisterUser.sql" />
+    <Build Include="Stored Procedures\sp_LoginUser.sql" />
+    <Build Include="Stored Procedures\sp_GetUserById.sql" />
+    <Build Include="Stored Procedures\sp_GetRegistrationsPaged.sql" />
+    <Build Include="Stored Procedures\sp_GetStates.sql" />
+    <Build Include="Stored Procedures\sp_GetCitiesByState.sql" />
+    <Build Include="Stored Procedures\sp_GetHobbies.sql" />
+    <Build Include="Stored Procedures\sp_InsertUserHobby.sql" />
+    <Build Include="Stored Procedures\sp_DeleteUserHobbies.sql" />
+    <Build Include="Stored Procedures\sp_InsertDocument.sql" />
+    <Build Include="Stored Procedures\sp_GetDocumentsByUser.sql" />
+    <Build Include="Stored Procedures\sp_GetDocumentById.sql" />
+    <Build Include="Stored Procedures\sp_UpdateUser.sql" />
+    <Build Include="Stored Procedures\sp_DeleteUser.sql" />
+    <Build Include="Stored Procedures\sp_GetUserHobbies.sql" />
+    <Build Include="Stored Procedures\sp_DeleteDocument.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Post-Deployment\Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\SetupDatabase.sql" />
   </ItemGroup>
 </Project>
