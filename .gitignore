@@ -1,0 +1,75 @@
+## -----------------------------------------------
+## ASP.NET Core + SQL Server Database Project
+## .gitignore
+## -----------------------------------------------
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS Code files
+.vscode/
+
+# Rider
+.idea/
+
+# NuGet packages (restored automatically)
+packages/
+*.nupkg
+**/[Pp]ackages/
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# MSBuild outputs
+[Ll]og/
+[Ll]ogs/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET scaffolding
+ScaffoldingReadme.txt
+
+# SQL Server Data Tools
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.pfx
+*.publishsettings
+OrphanedFiles/
+*.publish.xml
+
+# Windows thumbnails
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.temp
+~$*
+
+# Compiled Razor views (generated at build time)
+*.cshtml.g.cs
+
+# User-specific appsettings (may contain secrets)
+appsettings.*.local.json
+secrets.json
+
+# Publish output
+publish/
