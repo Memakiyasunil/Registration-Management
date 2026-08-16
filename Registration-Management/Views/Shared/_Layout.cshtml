@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Registration_Management.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-gradient-primary border-bottom shadow-sm mb-0">
             <div class="container-fluid">
@@ -92,13 +92,13 @@
         </div>
     }
 
-    <div class="container-fluid px-4 py-3">
+    <div class="container-fluid px-4 py-3 flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted py-2">
+    <footer class="border-top footer text-muted py-3 bg-white mt-auto">
         <div class="container-fluid px-4">
             &copy; 2026 Registration Management System
         </div>

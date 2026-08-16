@@ -1,20 +1,32 @@
-SET ANSI_NULLS ON
+-- ============================================================================
+-- Fix for: Microsoft.Data.SqlClient.SqlException
+-- 'SELECT failed because the following SET options have incorrect settings: QUOTED_IDENTIFIER'
+--
+-- Instructions: Execute this script in SQL Server Management Studio (SSMS)
+-- against your database (RegistrationDB).
+-- ============================================================================
+
+USE [RegistrationDB];
 GO
-SET QUOTED_IDENTIFIER ON
+
+SET ANSI_NULLS ON;
 GO
-CREATE PROCEDURE [dbo].[sp_GetRegistrationsPaged]
-    @PageNumber    INT = 1,
-    @PageSize      INT = 10,
-    @SearchTerm    NVARCHAR(100) = NULL,
-    @FilterName    NVARCHAR(100) = NULL,
-    @FilterUsername NVARCHAR(50) = NULL,
-    @FilterStateId INT = NULL,
-    @FilterGender  NVARCHAR(10)  = NULL,
-    @FilterFromDate DATE = NULL,
-    @FilterToDate   DATE = NULL,
-    @SortColumn    NVARCHAR(50)  = 'CreatedDate',
-    @SortDirection NVARCHAR(4)   = 'DESC',
-    @TotalCount    INT OUTPUT
+SET QUOTED_IDENTIFIER ON;
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[sp_GetRegistrationsPaged]
+    @PageNumber     INT = 1,
+    @PageSize       INT = 10,
+    @SearchTerm     NVARCHAR(100) = NULL,
+    @FilterName     NVARCHAR(100) = NULL,
+    @FilterUsername NVARCHAR(50)  = NULL,
+    @FilterStateId  INT           = NULL,
+    @FilterGender   NVARCHAR(10)  = NULL,
+    @FilterFromDate DATE          = NULL,
+    @FilterToDate   DATE          = NULL,
+    @SortColumn     NVARCHAR(50)  = 'CreatedDate',
+    @SortDirection  NVARCHAR(4)   = 'DESC',
+    @TotalCount     INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -83,4 +95,5 @@ BEGIN
           @Offset INT, @PageSize INT',
         @SearchTerm, @FilterName, @FilterUsername, @FilterStateId, @FilterGender,
         @FilterFromDate, @FilterToDate, @Offset, @PageSize;
-END
+END;
+GO

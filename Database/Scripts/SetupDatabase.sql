@@ -370,6 +370,10 @@ GO
 IF OBJECT_ID('sp_GetRegistrationsPaged', 'P') IS NOT NULL
     DROP PROCEDURE sp_GetRegistrationsPaged;
 GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 CREATE PROCEDURE sp_GetRegistrationsPaged
     @PageNumber    INT = 1,
     @PageSize      INT = 10,
@@ -386,6 +390,8 @@ CREATE PROCEDURE sp_GetRegistrationsPaged
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET QUOTED_IDENTIFIER ON;
+    SET ANSI_NULLS ON;
 
     -- Whitelist sort column to prevent injection
     DECLARE @SafeSortCol NVARCHAR(50) =
@@ -416,6 +422,8 @@ BEGIN
 
     -- Data query with dynamic sort
     DECLARE @SQL NVARCHAR(MAX) = N'
+    SET QUOTED_IDENTIFIER ON;
+    SET ANSI_NULLS ON;
     SELECT
         u.UserId, u.Name, u.Username, u.DateOfBirth, u.Gender,
         u.Address, s.StateName, c.CityName, u.Pincode,
