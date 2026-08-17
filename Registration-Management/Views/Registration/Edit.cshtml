@@ -3,14 +3,24 @@
     ViewData["Title"] = "Edit Registration";
 }
 
-<div class="page-header mb-4">
-    <h1 class="page-title">
-        <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24" class="me-2" style="vertical-align:-4px">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-        </svg>
-        Edit Registration
-    </h1>
-    <p class="text-muted">Update registration details. Password is not changed unless a new one is entered.</p>
+<!-- Page Header & Breadcrumbs -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+    <div>
+        <nav class="breadcrumb-nav">
+            <a asp-action="Index">Registrations</a>
+            <span class="breadcrumb-separator">/</span>
+            <a asp-action="Details" asp-route-id="@Model.UserId">@Model.Name</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>Edit</span>
+        </nav>
+        <h1 class="page-title">Edit Registration</h1>
+        <p class="page-subtitle">Update user profile information and manage attachments.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Details" asp-route-id="@Model.UserId" class="btn btn-outline-secondary">
+            Cancel
+        </a>
+    </div>
 </div>
 
 <form asp-action="Edit" asp-controller="Registration" method="post" enctype="multipart/form-data" id="registrationForm" novalidate>
@@ -19,39 +29,51 @@
 
     @if (!ViewData.ModelState.IsValid)
     {
-        <div class="alert alert-danger alert-dismissible fade show mb-4">
-            <strong>Please fix the following errors:</strong>
-            <ul class="mb-0 mt-2">
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <div class="fw-bold mb-1">Please correct the following errors:</div>
+            <ul class="mb-0 ps-3">
                 @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                 {
                     <li>@error.ErrorMessage</li>
                 }
             </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     <div class="row g-4">
+        <!-- Main Column (Left) -->
         <div class="col-lg-8">
-            <!-- Personal Information -->
-            <div class="card form-card mb-4">
-                <div class="card-header form-card-header">Personal Information</div>
-                <div class="card-body p-4">
+
+            <!-- 1. Personal Information Card -->
+            <div class="saas-card mb-4">
+                <div class="saas-card-header">
+                    <div class="d-flex align-items-center">
+                        <svg class="saas-card-header-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span>Personal Information</span>
+                    </div>
+                </div>
+                <div class="saas-card-body">
                     <div class="row g-3">
+                        <!-- Full Name -->
                         <div class="col-md-6">
                             <label asp-for="Name" class="form-label required-label">Full Name</label>
                             <input asp-for="Name" class="form-control" id="Name" placeholder="Enter full name" />
                             <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
 
+                        <!-- Username -->
                         <div class="col-md-6">
                             <label asp-for="Username" class="form-label required-label">Username</label>
                             <input asp-for="Username" class="form-control" id="Username" placeholder="Username" autocomplete="off" />
-                            <div id="usernameStatus" class="mt-1 small"></div>
+                            <div id="usernameStatus" class="mt-1"></div>
                             <span asp-validation-for="Username" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-4">
+                        <!-- Date of Birth -->
+                        <div class="col-md-6">
                             <label asp-for="DateOfBirth" class="form-label required-label">Date of Birth</label>
                             <input asp-for="DateOfBirth" type="date" class="form-control" id="DateOfBirth"
                                    max="@DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd")"
@@ -59,44 +81,56 @@
                             <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label required-label">Gender</label>
-                            <div class="d-flex gap-3 mt-1">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" asp-for="Gender" value="Male" id="genderMale" />
-                                    <label class="form-check-label" for="genderMale">Male</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" asp-for="Gender" value="Female" id="genderFemale" />
-                                    <label class="form-check-label" for="genderFemale">Female</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" asp-for="Gender" value="Other" id="genderOther" />
-                                    <label class="form-check-label" for="genderOther">Other</label>
-                                </div>
-                            </div>
-                            <span asp-validation-for="Gender" class="text-danger small"></span>
+                        <!-- Pincode -->
+                        <div class="col-md-6">
+                            <label asp-for="Pincode" class="form-label required-label">Pincode</label>
+                            <input asp-for="Pincode" class="form-control" id="Pincode" placeholder="6-digit pincode" maxlength="6" />
+                            <span asp-validation-for="Pincode" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-4">
-                            <label asp-for="Pincode" class="form-label required-label">Pincode</label>
-                            <input asp-for="Pincode" class="form-control" placeholder="6-digit pincode" maxlength="6" />
-                            <span asp-validation-for="Pincode" class="text-danger small"></span>
+                        <!-- Gender (Selectable Pill Cards) -->
+                        <div class="col-12">
+                            <label class="form-label required-label">Gender</label>
+                            <div class="gender-radio-group">
+                                <label class="gender-radio-card @(Model.Gender == "Male" ? "active" : "")">
+                                    <input type="radio" asp-for="Gender" value="Male" id="genderMale" />
+                                    <span>👨 Male</span>
+                                </label>
+                                <label class="gender-radio-card @(Model.Gender == "Female" ? "active" : "")">
+                                    <input type="radio" asp-for="Gender" value="Female" id="genderFemale" />
+                                    <span>👩 Female</span>
+                                </label>
+                                <label class="gender-radio-card @(Model.Gender == "Other" ? "active" : "")">
+                                    <input type="radio" asp-for="Gender" value="Other" id="genderOther" />
+                                    <span>🧑 Other</span>
+                                </label>
+                            </div>
+                            <span asp-validation-for="Gender" class="text-danger small"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Location -->
-            <div class="card form-card mb-4">
-                <div class="card-header form-card-header">Location Details</div>
-                <div class="card-body p-4">
+            <!-- 2. Location Details Card -->
+            <div class="saas-card mb-4">
+                <div class="saas-card-header">
+                    <div class="d-flex align-items-center">
+                        <svg class="saas-card-header-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                        <span>Location Details</span>
+                    </div>
+                </div>
+                <div class="saas-card-body">
                     <div class="row g-3">
+                        <!-- Address -->
                         <div class="col-12">
-                            <label asp-for="Address" class="form-label required-label">Address</label>
-                            <textarea asp-for="Address" class="form-control" rows="3" placeholder="Enter complete address"></textarea>
+                            <label asp-for="Address" class="form-label required-label">Street Address</label>
+                            <textarea asp-for="Address" class="form-control" rows="2" id="Address" placeholder="Enter complete address"></textarea>
                             <span asp-validation-for="Address" class="text-danger small"></span>
                         </div>
+
+                        <!-- State -->
                         <div class="col-md-6">
                             <label asp-for="StateId" class="form-label required-label">State</label>
                             <select asp-for="StateId" class="form-select" id="StateId">
@@ -108,6 +142,8 @@
                             </select>
                             <span asp-validation-for="StateId" class="text-danger small"></span>
                         </div>
+
+                        <!-- City -->
                         <div class="col-md-6">
                             <label asp-for="CityId" class="form-label required-label">City</label>
                             <select asp-for="CityId" class="form-select" id="CityId">
@@ -123,91 +159,142 @@
                 </div>
             </div>
 
-            <!-- Existing Documents -->
+            <!-- 3. Existing Documents (if any) -->
             @if (Model.ExistingDocuments.Any())
             {
-                <div class="card form-card mb-4">
-                    <div class="card-header form-card-header">Existing Documents</div>
-                    <div class="card-body p-3">
-                        @foreach (var doc in Model.ExistingDocuments)
-                        {
-                            <div class="d-flex align-items-center justify-content-between border-bottom py-2">
-                                <span class="small">
-                                    <svg width="14" height="14" fill="#6366f1" viewBox="0 0 24 24" class="me-1">
-                                        <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/>
-                                    </svg>
-                                    @doc.OriginalFileName
-                                </span>
-                                <div class="d-flex gap-1">
-                                    <a asp-action="ViewDocument" asp-route-id="@doc.DocumentId"
-                                       class="btn btn-xs btn-outline-primary" target="_blank">View</a>
-                                    <a asp-action="DownloadDocument" asp-route-id="@doc.DocumentId"
-                                       class="btn btn-xs btn-outline-success">Download</a>
-                                </div>
-                            </div>
-                        }
+                <div class="saas-card mb-4">
+                    <div class="saas-card-header">
+                        <span>Attached Documents (@Model.ExistingDocuments.Count)</span>
+                    </div>
+                    <div class="saas-card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table saas-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>File Name</th>
+                                        <th>Size</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var doc in Model.ExistingDocuments)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <svg width="18" height="18" fill="#4f46e5" viewBox="0 0 24 24" class="me-2 flex-shrink-0">
+                                                        <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/>
+                                                    </svg>
+                                                    <span class="fw-medium text-truncate">@doc.OriginalFileName</span>
+                                                </div>
+                                            </td>
+                                            <td class="small text-muted">@FormatDocSize(doc.FileSizeBytes)</td>
+                                            <td class="text-end">
+                                                <div class="d-flex justify-content-end gap-1">
+                                                    <a asp-action="ViewDocument" asp-route-id="@doc.DocumentId"
+                                                       class="btn btn-sm btn-outline-secondary" target="_blank">View</a>
+                                                    <a asp-action="DownloadDocument" asp-route-id="@doc.DocumentId"
+                                                       class="btn btn-sm btn-outline-secondary">Download</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             }
 
-            <!-- Add More Documents -->
-            <div class="card form-card mb-4">
-                <div class="card-header form-card-header">
-                    Add More Documents
-                    <small class="text-muted ms-2">(Optional — max 5 files, 5MB each)</small>
+            <!-- 4. Add More Documents -->
+            <div class="saas-card mb-4">
+                <div class="saas-card-header">
+                    <div class="d-flex align-items-center">
+                        <svg class="saas-card-header-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zm-3-7H9v-2h6v2zm2 4H9v-2h8v2z"/>
+                        </svg>
+                        <span>Add More Documents</span>
+                    </div>
+                    <span class="text-muted small">Optional — max 5 files, 5MB each</span>
                 </div>
-                <div class="card-body p-4">
+                <div class="saas-card-body">
                     <div class="file-drop-zone" id="fileDropZone">
-                        <svg width="40" height="40" fill="#94a3b8" viewBox="0 0 24 24" class="mb-2">
+                        <svg class="file-drop-icon" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
                         </svg>
-                        <p class="mb-1 text-muted small">Drag & drop or</p>
+                        <div class="fw-semibold text-primary mb-1">Click to upload or drag and drop</div>
+                        <p class="text-muted small mb-0">PDF, JPG, PNG, DOC, DOCX</p>
                         <input type="file" name="Documents" id="documentsInput"
                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                                multiple class="d-none" />
-                        <button type="button" class="btn btn-outline-primary btn-sm"
-                                onclick="document.getElementById('documentsInput').click()">Browse Files</button>
                     </div>
-                    <div id="fileList" class="mt-2"></div>
-                    <div id="fileError" class="text-danger small mt-1"></div>
+                    <div id="fileList"></div>
+                    <div id="fileError" class="text-danger small mt-2"></div>
                 </div>
             </div>
+
         </div>
 
+        <!-- Sidebar Column (Right) -->
         <div class="col-lg-4">
-            <!-- Hobbies -->
-            <div class="card form-card mb-4">
-                <div class="card-header form-card-header">Hobbies</div>
-                <div class="card-body p-3">
-                    <div id="hobbiesError" class="text-danger small mb-2"></div>
-                    @foreach (var hobby in Model.AllHobbies)
-                    {
-                        <div class="form-check hobby-check">
-                            <input class="form-check-input" type="checkbox"
-                                   name="SelectedHobbyIds" value="@hobby.HobbyId"
-                                   id="hobby_@hobby.HobbyId"
-                                   @(Model.SelectedHobbyIds.Contains(hobby.HobbyId) ? "checked" : "") />
-                            <label class="form-check-label" for="hobby_@hobby.HobbyId">@hobby.HobbyName</label>
-                        </div>
-                    }
+
+            <!-- 5. Hobbies Card (Selectable Chips) -->
+            <div class="saas-card mb-4">
+                <div class="saas-card-header">
+                    <div class="d-flex align-items-center">
+                        <svg class="saas-card-header-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span>Hobbies & Interests</span>
+                    </div>
+                </div>
+                <div class="saas-card-body">
+                    <p class="text-muted small mb-3">Update hobbies associated with this profile.</p>
+                    <div class="hobby-chips-grid">
+                        @foreach (var hobby in Model.AllHobbies)
+                        {
+                            var isChecked = Model.SelectedHobbyIds.Contains(hobby.HobbyId);
+                            <label class="hobby-chip @(isChecked ? "selected" : "")" for="hobby_@hobby.HobbyId" id="hobby_chip_@hobby.HobbyId">
+                                <input type="checkbox"
+                                       name="SelectedHobbyIds" value="@hobby.HobbyId"
+                                       id="hobby_@hobby.HobbyId"
+                                       @(isChecked ? "checked" : "") />
+                                <span class="hobby-chip-check">✓</span>
+                                <span>@hobby.HobbyName</span>
+                            </label>
+                        }
+                    </div>
+                    <div id="hobbiesError" class="text-danger small mt-2"></div>
                 </div>
             </div>
 
-            <!-- Actions -->
-            <div class="card form-card">
-                <div class="card-body p-4">
-                    <button type="submit" class="btn btn-warning btn-lg w-100 mb-3">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" class="me-2">
+            <!-- 6. Sticky Actions Card -->
+            <div class="saas-card position-sticky" style="top: 80px;">
+                <div class="saas-card-body">
+                    <button type="submit" class="btn btn-primary w-100 py-2 mb-2" id="submitBtn">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
                         </svg>
                         Save Changes
                     </button>
-                    <a asp-action="Details" asp-route-id="@Model.UserId" class="btn btn-outline-secondary w-100">Cancel</a>
+                    <a asp-action="Details" asp-route-id="@Model.UserId" class="btn btn-outline-secondary w-100 py-2">
+                        Cancel
+                    </a>
                 </div>
             </div>
+
         </div>
     </div>
 </form>
+
+@functions {
+    string FormatDocSize(long bytes)
+    {
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1048576) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes / 1048576.0:F1} MB";
+    }
+}
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

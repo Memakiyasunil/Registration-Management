@@ -4,61 +4,77 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Registration Management</title>
-    <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Registration_Management.styles.css" asp-append-version="true" />
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-gradient-primary border-bottom shadow-sm mb-0">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" asp-controller="Registration" asp-action="Index">
-                    <svg class="me-2" width="22" height="22" fill="white" viewBox="0 0 24 24" style="vertical-align:-3px">
-                        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3a3 3 0 110 6 3 3 0 010-6zm0 14.2a7.2 7.2 0 01-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 01-6 3.22z"/>
-                    </svg>
-                    Reg. Management
+        <nav class="navbar navbar-expand-md dashboard-navbar">
+            <div class="container-fluid px-3">
+                <!-- Brand -->
+                <a class="dashboard-brand" asp-controller="Registration" asp-action="Index">
+                    <span class="brand-icon-box">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3a3 3 0 110 6 3 3 0 010-6zm0 14.2a7.2 7.2 0 01-6-3.22c.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08a7.2 7.2 0 01-6 3.22z"/>
+                        </svg>
+                    </span>
+                    <span>Registration Management</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+                <!-- Mobile Hamburger Toggle -->
+                <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarContent" aria-controls="navbarContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <!-- Navbar Links & Actions -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0 ms-md-3 gap-1">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Registration" asp-action="Index">
-                                <svg width="16" height="16" fill="white" viewBox="0 0 24 24" class="me-1">
+                            <a class="nav-link-custom @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-controller="Registration" asp-action="Index">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
                                 </svg>
                                 Registration List
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Registration" asp-action="Create">
-                                <svg width="16" height="16" fill="white" viewBox="0 0 24 24" class="me-1">
+                            <a class="nav-link-custom @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")"
+                               asp-controller="Registration" asp-action="Create">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                                 </svg>
                                 New Registration
                             </a>
                         </li>
                     </ul>
-                    @if (Context.Session.GetString("UserId") != null)
-                    {
-                        <ul class="navbar-nav">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown"
-                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <svg width="16" height="16" fill="white" viewBox="0 0 24 24" class="me-1">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                                    </svg>
-                                    @Context.Session.GetString("UserName")
+
+                    <!-- User Profile / Session Menu -->
+                    <div class="d-flex align-items-center">
+                        @if (Context.Session.GetString("UserId") != null)
+                        {
+                            var userName = Context.Session.GetString("UserName") ?? "User";
+                            var userInitial = !string.IsNullOrEmpty(userName) ? userName.Substring(0, 1).ToUpper() : "U";
+
+                            <div class="dropdown">
+                                <a class="user-menu-btn dropdown-toggle" href="#" role="button"
+                                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="user-avatar">@userInitial</span>
+                                    <span>@userName</span>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-1" aria-labelledby="userDropdown">
+                                    <li class="px-3 py-2 border-bottom">
+                                        <div class="small text-muted">Signed in as</div>
+                                        <div class="fw-semibold text-truncate">@Context.Session.GetString("Username")</div>
+                                    </li>
                                     <li>
                                         <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="dropdown-item text-danger">
-                                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" class="me-1">
+                                            <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2">
+                                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
                                                 </svg>
                                                 Logout
@@ -66,9 +82,15 @@
                                         </form>
                                     </li>
                                 </ul>
-                            </li>
-                        </ul>
-                    }
+                            </div>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-secondary">
+                                Sign In
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>
@@ -76,31 +98,39 @@
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show m-3 mb-0" role="alert">
-            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" class="me-2">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="container-fluid px-4 pt-3">
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-0" role="alert">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" class="me-2 flex-shrink-0">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                <div class="flex-grow-1">@TempData["Success"]</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         </div>
     }
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show m-3 mb-0" role="alert">
-            @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="container-fluid px-4 pt-3">
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-0" role="alert">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" class="me-2 flex-shrink-0">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                <div class="flex-grow-1">@TempData["Error"]</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         </div>
     }
 
-    <div class="container-fluid px-4 py-3 flex-grow-1">
-        <main role="main" class="pb-3">
+    <div class="container-fluid px-3 px-md-4 py-4 flex-grow-1">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted py-3 bg-white mt-auto">
-        <div class="container-fluid px-4">
-            &copy; 2026 Registration Management System
+    <footer class="footer">
+        <div class="container-fluid px-3 px-md-4 d-flex justify-content-between align-items-center">
+            <span>&copy; @DateTime.UtcNow.Year Registration Management System</span>
+            <span class="text-muted small">Enterprise Admin Panel</span>
         </div>
     </footer>
 

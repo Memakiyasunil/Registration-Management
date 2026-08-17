@@ -1,45 +1,46 @@
 @model RegistrationListViewModel
 @{
-    ViewData["Title"] = "Registration List";
+    ViewData["Title"] = "Registrations";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<!-- Page Header & Actions -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
     <div>
-        <h1 class="page-title mb-1">
-            <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24" class="me-2" style="vertical-align:-4px">
-                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
-            </svg>
-            Registration List
-        </h1>
-        <p class="text-muted mb-0">Total: <strong>@Model.TotalCount</strong> registrations</p>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <h1 class="page-title">Registrations</h1>
+            <span class="badge-stat">@Model.TotalCount Total</span>
+        </div>
+        <p class="page-subtitle">Manage and view all registered users in the directory.</p>
     </div>
-    <a asp-controller="Registration" asp-action="Create" class="btn btn-primary">
-        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" class="me-1">
+    <a asp-action="Create" class="btn btn-primary">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
         </svg>
         New Registration
     </a>
 </div>
 
-<!-- Search & Filters -->
-<div class="card filter-card mb-4">
-    <div class="card-body">
+<!-- Search & Filters Toolbar -->
+<div class="saas-card mb-4">
+    <div class="saas-card-body py-3">
         <form asp-action="Index" method="get" id="filterForm">
-            <!-- Quick Search -->
-            <div class="row g-2 mb-3">
-                <div class="col-md-8">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white">
-                            <svg width="16" height="16" fill="#94a3b8" viewBox="0 0 24 24">
+            <div class="row g-2 align-items-center">
+                <!-- Search Input -->
+                <div class="col-md-7 col-lg-8">
+                    <div class="input-icon-wrapper">
+                        <span class="input-leading-icon">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                             </svg>
                         </span>
-                        <input type="text" name="searchTerm" value="@Model.SearchTerm" class="form-control"
+                        <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                               class="form-control input-with-leading-icon"
                                placeholder="Search by name or username..." id="searchInput" />
-                        <button type="submit" class="btn btn-primary px-4">Search</button>
                     </div>
                 </div>
-                <div class="col-md-2">
+
+                <!-- Page Size Dropdown -->
+                <div class="col-6 col-md-2 col-lg-2">
                     <select name="pageSize" class="form-select" onchange="this.form.submit()" id="pageSizeSelect">
                         @foreach (var ps in new[] { 10, 25, 50, 100 })
                         {
@@ -54,31 +55,44 @@
                         }
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-outline-secondary w-100" data-bs-toggle="collapse"
-                            data-bs-target="#advancedFilters">
-                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" class="me-1">
+
+                <!-- Filter Toggle Button -->
+                <div class="col-6 col-md-3 col-lg-2">
+                    @{
+                        bool hasActiveFilters = !string.IsNullOrEmpty(Model.FilterName) ||
+                                                !string.IsNullOrEmpty(Model.FilterUsername) ||
+                                                Model.FilterStateId.HasValue ||
+                                                !string.IsNullOrEmpty(Model.FilterGender) ||
+                                                Model.FilterFromDate.HasValue ||
+                                                Model.FilterToDate.HasValue;
+                    }
+                    <button type="button" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1"
+                            data-bs-toggle="collapse" data-bs-target="#filterDrawer" aria-expanded="@(hasActiveFilters ? "true" : "false")">
+                        <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
                         </svg>
-                        Filters
+                        <span>Filters</span>
+                        @if (hasActiveFilters)
+                        {
+                            <span class="badge bg-primary rounded-pill ms-1" style="font-size:0.65rem;">Active</span>
+                        }
                     </button>
                 </div>
             </div>
 
-            <!-- Advanced Filters (collapsible) -->
-            <div class="collapse @(Model.FilterName != null || Model.FilterUsername != null || Model.FilterStateId != null || Model.FilterGender != null || Model.FilterFromDate != null ? "show" : "")"
-                 id="advancedFilters">
-                <div class="row g-2 pt-2 border-top">
+            <!-- Filter Drawer (Collapsible) -->
+            <div class="collapse @(hasActiveFilters ? "show" : "") mt-3 pt-3 border-top" id="filterDrawer">
+                <div class="row g-3">
                     <div class="col-md-3">
-                        <label class="form-label small text-muted mb-1">Name</label>
+                        <label class="form-label small">Name</label>
                         <input type="text" name="filterName" value="@Model.FilterName" class="form-control form-control-sm" placeholder="Filter by name" />
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label small text-muted mb-1">Username</label>
+                        <label class="form-label small">Username</label>
                         <input type="text" name="filterUsername" value="@Model.FilterUsername" class="form-control form-control-sm" placeholder="Filter by username" />
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label small text-muted mb-1">State</label>
+                        <label class="form-label small">State</label>
                         <select name="filterStateId" class="form-select form-select-sm">
                             <option value="">All States</option>
                             @foreach (var s in Model.States)
@@ -95,7 +109,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label small text-muted mb-1">Gender</label>
+                        <label class="form-label small">Gender</label>
                         <select name="filterGender" class="form-select form-select-sm">
                             <option value="">All Genders</option>
                             @if (Model.FilterGender == "Male") { <option value="Male" selected>Male</option> } else { <option value="Male">Male</option> }
@@ -104,25 +118,25 @@
                         </select>
                     </div>
                     <div class="col-md-1">
-                        <label class="form-label small text-muted mb-1">From Date</label>
+                        <label class="form-label small">From</label>
                         <input type="date" name="filterFromDate"
                                value="@(Model.FilterFromDate.HasValue ? Model.FilterFromDate.Value.ToString("yyyy-MM-dd") : "")"
                                class="form-control form-control-sm" />
                     </div>
                     <div class="col-md-1">
-                        <label class="form-label small text-muted mb-1">To Date</label>
+                        <label class="form-label small">To</label>
                         <input type="date" name="filterToDate"
                                value="@(Model.FilterToDate.HasValue ? Model.FilterToDate.Value.ToString("yyyy-MM-dd") : "")"
                                class="form-control form-control-sm" />
                     </div>
-                    <div class="col-12 d-flex gap-2 pt-1">
+                    <div class="col-12 d-flex justify-content-end gap-2 pt-1">
+                        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Reset Filters</a>
                         <button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
-                        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Reset</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Hidden sort fields -->
+            <!-- Hidden Sorting Fields -->
             <input type="hidden" name="sortColumn" id="sortColumn" value="@Model.SortColumn" />
             <input type="hidden" name="sortDirection" id="sortDirection" value="@Model.SortDirection" />
             <input type="hidden" name="pageNumber" id="pageNumber" value="1" />
@@ -130,105 +144,145 @@
     </div>
 </div>
 
-<!-- Table -->
-<div class="card">
+<!-- Data Table Card -->
+<div class="saas-table-wrapper mb-4">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0" id="registrationTable">
-            <thead class="table-head-primary">
+        <table class="table saas-table align-middle" id="registrationTable">
+            <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col" class="sortable-col" data-col="Name">
-                        Name @Html.Raw(SortIconHtml("Name"))
+                    <th scope="col" style="width: 45px;">#</th>
+                    <th scope="col" class="sortable-header" data-col="Name">
+                        <div class="d-flex align-items-center gap-1">
+                            <span>User</span>
+                            @Html.Raw(SortIconHtml("Name"))
+                        </div>
                     </th>
-                    <th scope="col" class="sortable-col" data-col="Username">
-                        Username @Html.Raw(SortIconHtml("Username"))
-                    </th>
-                    <th scope="col" class="sortable-col" data-col="DateOfBirth">
-                        DOB @Html.Raw(SortIconHtml("DateOfBirth"))
+                    <th scope="col" class="sortable-header" data-col="DateOfBirth">
+                        <div class="d-flex align-items-center gap-1">
+                            <span>DOB</span>
+                            @Html.Raw(SortIconHtml("DateOfBirth"))
+                        </div>
                     </th>
                     <th scope="col">Gender</th>
                     <th scope="col">Hobbies</th>
-                    <th scope="col">State / City</th>
+                    <th scope="col">Location</th>
                     <th scope="col">Pincode</th>
-                    <th scope="col" class="sortable-col" data-col="CreatedDate">
-                        Registered @Html.Raw(SortIconHtml("CreatedDate"))
+                    <th scope="col" class="sortable-header" data-col="CreatedDate">
+                        <div class="d-flex align-items-center gap-1">
+                            <span>Registered</span>
+                            @Html.Raw(SortIconHtml("CreatedDate"))
+                        </div>
                     </th>
-                    <th scope="col">Docs</th>
-                    <th scope="col">Actions</th>
+                    <th scope="col" class="text-center">Docs</th>
+                    <th scope="col" class="text-end" style="min-width: 110px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @if (!Model.Registrations.Any())
                 {
                     <tr>
-                        <td colspan="11" class="text-center py-5 text-muted">
-                            <svg width="48" height="48" fill="#d1d5db" viewBox="0 0 24 24" class="mb-2 d-block mx-auto">
-                                <path d="M20 6h-2.18c.07-.44.18-.88.18-1.36 0-2.56-2.09-4.64-4.64-4.64-1.42 0-2.68.62-3.57 1.58L9 3l-.79-.42C7.32 1.62 6.06 1 4.64 1 2.09 1 0 3.08 0 5.64c0 .48.11.92.18 1.36H0v14a2 2 0 002 2h16a2 2 0 002-2V6zm-8 13l-4-4 1.41-1.41L12 16.17l6.59-6.59L20 11l-8 8z"/>
-                            </svg>
-                            No registrations found.
+                        <td colspan="10" class="p-0">
+                            <div class="empty-state-box">
+                                <svg class="empty-state-icon" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                                </svg>
+                                <h6 class="fw-bold mb-1">No registrations found</h6>
+                                <p class="text-muted small mb-3">Try adjusting your search criteria or create a new user profile.</p>
+                                <a asp-action="Create" class="btn btn-sm btn-primary">
+                                    + Create Registration
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 }
-                @{int rowNum = (Model.PageNumber - 1) * Model.PageSize + 1;}
+                @{
+                    int rowNum = (Model.PageNumber - 1) * Model.PageSize + 1;
+                }
                 @foreach (var item in Model.Registrations)
                 {
+                    var userInitial = !string.IsNullOrEmpty(item.Name) ? item.Name.Substring(0, 1).ToUpper() : "U";
                     <tr>
                         <td class="text-muted small">@(rowNum++)</td>
                         <td>
-                            <div class="fw-semibold">@item.Name</div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="user-avatar" style="width:30px; height:30px; font-size:0.8rem;">@userInitial</span>
+                                <div>
+                                    <div class="fw-semibold">@item.Name</div>
+                                    <div class="small text-muted font-monospace">@@@item.Username</div>
+                                </div>
+                            </div>
                         </td>
-                        <td><span class="badge bg-light text-dark border">@item.Username</span></td>
-                        <td class="small">@item.DateOfBirth.ToString("dd MMM yyyy")</td>
+                        <td class="small text-secondary">@item.DateOfBirth.ToString("dd MMM yyyy")</td>
                         <td>
-                            <span class="badge @(item.Gender == "Male" ? "bg-primary" : item.Gender == "Female" ? "bg-pink" : "bg-secondary")">
-                                @item.Gender
-                            </span>
+                            @if (item.Gender == "Male")
+                            {
+                                <span class="saas-badge badge-gender-male">Male</span>
+                            }
+                            else if (item.Gender == "Female")
+                            {
+                                <span class="saas-badge badge-gender-female">Female</span>
+                            }
+                            else
+                            {
+                                <span class="saas-badge badge-gender-other">@item.Gender</span>
+                            }
                         </td>
                         <td>
                             @if (!string.IsNullOrEmpty(item.Hobbies))
                             {
-                                <div class="hobby-tags">
+                                <div class="d-flex flex-wrap gap-1" style="max-width: 220px;">
                                     @foreach (var h in item.Hobbies.Split(','))
                                     {
-                                        <span class="badge-hobby">@h.Trim()</span>
+                                        <span class="badge-hobby-tag">@h.Trim()</span>
                                     }
                                 </div>
-                            }
-                        </td>
-                        <td class="small">
-                            <div>@item.StateName</div>
-                            <div class="text-muted">@item.CityName</div>
-                        </td>
-                        <td class="small">@item.Pincode</td>
-                        <td class="small text-muted">@item.CreatedDate.ToString("dd MMM yyyy")</td>
-                        <td>
-                            @if (item.DocumentCount > 0)
-                            {
-                                <span class="badge bg-info text-dark">@item.DocumentCount file(s)</span>
                             }
                             else
                             {
                                 <span class="text-muted small">—</span>
                             }
                         </td>
-                        <td>
-                            <div class="d-flex gap-1 flex-wrap">
+                        <td class="small">
+                            <div class="fw-medium text-dark">@item.StateName</div>
+                            <div class="text-muted" style="font-size:0.75rem;">@item.CityName</div>
+                        </td>
+                        <td class="small text-secondary font-monospace">@item.Pincode</td>
+                        <td class="small text-muted">@item.CreatedDate.ToString("dd MMM yyyy")</td>
+                        <td class="text-center">
+                            @if (item.DocumentCount > 0)
+                            {
+                                <span class="saas-badge" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd;">
+                                    @item.DocumentCount
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">—</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-1">
+                                <!-- View Details -->
                                 <a asp-action="Details" asp-route-id="@item.UserId"
-                                   class="btn btn-sm btn-outline-info" title="Details">
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                   class="btn-icon btn-icon-view" title="View Profile" data-bs-toggle="tooltip">
+                                    <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                                     </svg>
                                 </a>
+
+                                <!-- Edit -->
                                 <a asp-action="Edit" asp-route-id="@item.UserId"
-                                   class="btn btn-sm btn-outline-warning" title="Edit">
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                   class="btn-icon btn-icon-edit" title="Edit Profile" data-bs-toggle="tooltip">
+                                    <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                                     </svg>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger"
-                                        title="Delete"
+
+                                <!-- Delete -->
+                                <button type="button" class="btn-icon btn-icon-delete"
+                                        title="Delete Registration" data-bs-toggle="tooltip"
                                         onclick="confirmDelete(@item.UserId, '@Html.Raw(item.Name.Replace("'", "\\'"))')">
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                    <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                                     </svg>
                                 </button>
@@ -240,21 +294,21 @@
         </table>
     </div>
 
-    <!-- Pagination -->
+    <!-- Pagination Footer -->
     @if (Model.TotalPages > 1)
     {
-        <div class="card-footer d-flex justify-content-between align-items-center">
+        <div class="p-3 border-top d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
             <small class="text-muted">
                 Showing @((Model.PageNumber - 1) * Model.PageSize + 1)–@(Math.Min(Model.PageNumber * Model.PageSize, Model.TotalCount))
-                of @Model.TotalCount records
+                of @Model.TotalCount registrations
             </small>
-            <nav>
-                <ul class="pagination pagination-sm mb-0">
+            <nav aria-label="Table pagination">
+                <ul class="saas-pagination">
                     <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
-                        <a class="page-link" href="@PageUrl(1)">««</a>
+                        <a class="page-link" href="@PageUrl(1)" title="First Page">«</a>
                     </li>
                     <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
-                        <a class="page-link" href="@PageUrl(Model.PageNumber - 1)">‹</a>
+                        <a class="page-link" href="@PageUrl(Model.PageNumber - 1)" title="Previous Page">‹</a>
                     </li>
                     @for (int p = Math.Max(1, Model.PageNumber - 2); p <= Math.Min(Model.TotalPages, Model.PageNumber + 2); p++)
                     {
@@ -263,10 +317,10 @@
                         </li>
                     }
                     <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
-                        <a class="page-link" href="@PageUrl(Model.PageNumber + 1)">›</a>
+                        <a class="page-link" href="@PageUrl(Model.PageNumber + 1)" title="Next Page">›</a>
                     </li>
                     <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
-                        <a class="page-link" href="@PageUrl(Model.TotalPages)">»»</a>
+                        <a class="page-link" href="@PageUrl(Model.TotalPages)" title="Last Page">»</a>
                     </li>
                 </ul>
             </nav>
@@ -275,24 +329,28 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <h5 class="modal-title text-danger">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body pt-0">
-                <p>Are you sure you want to delete <strong id="deleteUserName"></strong>?</p>
-                <p class="text-muted small">This will soft-delete the registration (IsActive = 0).</p>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                <form asp-action="Delete" method="post" id="deleteForm">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" id="deleteUserId" />
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                </form>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content rounded-3 border-0 shadow-lg">
+            <div class="modal-body p-4 text-center">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width: 48px; height: 48px; background: #fee2e2; color: #dc2626;">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                </div>
+                <h5 class="fw-bold mb-2" id="deleteModalTitle">Delete Registration</h5>
+                <p class="text-secondary small mb-3">
+                    Are you sure you want to delete <strong class="text-dark" id="deleteUserName"></strong>? This record will be archived.
+                </p>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">Cancel</button>
+                    <form asp-action="Delete" method="post" id="deleteForm" class="w-50">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" id="deleteUserId" />
+                        <button type="submit" class="btn btn-danger w-100" style="background:#dc2626; border-color:#dc2626;">Delete</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -320,7 +378,7 @@
     string SortIconHtml(string col)
     {
         if (Model.SortColumn != col)
-            return "<svg width='12' height='12' fill='#9ca3af' viewBox='0 0 24 24'><path d='M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.42 1.41L12 21l4.59-4.59L15.17 15 12 18.17z'/></svg>";
+            return "<svg width='12' height='12' fill='#94a3b8' viewBox='0 0 24 24'><path d='M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.42 1.41L12 21l4.59-4.59L15.17 15 12 18.17z'/></svg>";
         return Model.SortDirection == "ASC"
             ? "<svg width='12' height='12' fill='#4f46e5' viewBox='0 0 24 24'><path d='M7 14l5-5 5 5z'/></svg>"
             : "<svg width='12' height='12' fill='#4f46e5' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>";
@@ -330,8 +388,7 @@
 @section Scripts {
     <script>
         // Sort columns
-        document.querySelectorAll('.sortable-col').forEach(th => {
-            th.style.cursor = 'pointer';
+        document.querySelectorAll('.sortable-header').forEach(th => {
             th.addEventListener('click', function () {
                 const col = this.dataset.col;
                 const curCol = document.getElementById('sortColumn').value;
@@ -341,6 +398,12 @@
                 document.getElementById('pageNumber').value = 1;
                 document.getElementById('filterForm').submit();
             });
+        });
+
+        // Initialize Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (el) {
+            return new bootstrap.Tooltip(el);
         });
 
         // Delete confirmation
