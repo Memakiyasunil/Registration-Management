@@ -326,7 +326,12 @@ function initGenderCards() {
 function togglePwd(inputId, btn) {
     const input = document.getElementById(inputId);
     if (!input) return;
-    input.type = input.type === 'password' ? 'text' : 'password';
+    const isPwd = input.type === 'password';
+    input.type = isPwd ? 'text' : 'password';
+    if (btn) {
+        btn.innerHTML = isPwd ? eyeSlashSvg : eyeSvg;
+        btn.setAttribute('title', isPwd ? 'Hide password' : 'Show password');
+    }
 }
 
 // -------------------------------------------------------

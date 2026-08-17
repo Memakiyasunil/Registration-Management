@@ -422,6 +422,19 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 3;
 }
 
+/* Hide browser default password reveal button (Edge / Chromium / IE) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
 /* ---- Radio Button Cards (Gender) ---- */
 .gender-radio-group {
     display: grid;

@@ -14,8 +14,15 @@ namespace Registration_Management.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(bool expired = false)
         {
+            if (expired)
+            {
+                HttpContext.Session.Clear();
+                TempData["Error"] = "Your session has expired due to 2 minutes of inactivity. Please sign in again.";
+                return View();
+            }
+
             if (HttpContext.Session.GetString("UserId") != null)
                 return RedirectToAction("Index", "Registration");
 

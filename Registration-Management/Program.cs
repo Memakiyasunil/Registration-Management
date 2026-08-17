@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(
-        builder.Configuration.GetValue<int>("AppSettings:SessionTimeoutMinutes", 30));
+        builder.Configuration.GetValue<int>("AppSettings:SessionTimeoutMinutes", 2));
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
